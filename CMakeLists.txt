@@ -20,6 +20,8 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 # ----------------------------------------
 add_executable(double-pendulum
     src/main.cpp
+    src/Application.cpp
+    src/DoublePendulum.cpp
 )
 
 # ----------------------------------------
