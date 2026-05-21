@@ -13,6 +13,6 @@ private:
 
     void StartWindow();
     void MainLoop();
-    void Update();
+    void PhysicsUpdate();
     void Draw();
 };

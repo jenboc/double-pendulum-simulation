@@ -20,7 +20,7 @@ public:
     }
 };
 
-Vector2 operator+(Vector2 a, Vector2 b)
+Vector4 operator+(Vector4 a, Vector4 b)
 {
-    return { a.x + b.x, a.y + b.y };
+    return { a.x + b.x, a.y + b.y, a.z + b.z, a.w + b.w };
 }

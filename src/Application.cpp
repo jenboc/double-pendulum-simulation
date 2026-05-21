@@ -1,6 +1,8 @@
 #include <raylib.h>
 #include "Application.hpp"
 
+constexpr double PHYSICS_DT = 1.0 / 100.0;
+
 Application::Application() : _pendulum()
 {}
 
@@ -19,11 +21,20 @@ void Application::StartWindow()
 
 void Application::MainLoop()
 {
-   while (!WindowShouldClose())
-   {
-       Update();
-       Draw();
-   }
+    double accumulator = 0.0;
+
+    while (!WindowShouldClose())
+    {
+        accumulator += GetFrameTime();
+        
+        if (accumulator >= PHYSICS_DT)
+        {
+            PhysicsUpdate();
+            accumulator -= PHYSICS_DT;
+        }
+
+        Draw();
+    }
 }
 
 void Application::Draw()
@@ -36,7 +47,7 @@ void Application::Draw()
     EndDrawing();
 }
 
-void Application::Update()
+void Application::PhysicsUpdate()
 {
     _pendulum.Update();    
 }
