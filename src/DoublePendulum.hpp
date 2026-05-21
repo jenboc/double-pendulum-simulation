@@ -23,7 +23,7 @@ private:
 
     float _length1 { 1.0f };
     float _length2 { 1.0f };
-    float _angle1 { PI };
+    float _angle1 { 0 };
     float _angle2 { PI / 2 };
     float _mass1 { 2 };
     float _mass2 { 2 };

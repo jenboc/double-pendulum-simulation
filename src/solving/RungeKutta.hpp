@@ -3,7 +3,6 @@
 #include "OdeSolver.hpp"
 #include "VectorExtensions.hpp"
 #include <vector>
-#include <iostream>
 
 // General m-stage implementation
 template <typename T>
@@ -18,8 +17,6 @@ public:
     {
         // Validate Sizes
         size_t numStages = b.size();
-
-        std::cout << numStages << "\n" << c.size() << "\n" << a.size() << "\n";
 
         if (c.size() != numStages - 1)
             throw std::invalid_argument("Not enough c entries");
@@ -70,9 +67,7 @@ public:
             intermediateSteps += this->_stepSize * _stageMultipliers[i] * stages[i];
         }
 
-        std::cout << "BEFORE: " << this->_lastStep << "\n";
         this->_lastStep += intermediateSteps;
-        std::cout << "AFTER: " << this->_lastStep << "\n";
         this->_t += this->_stepSize;
 
         return this->_lastStep;

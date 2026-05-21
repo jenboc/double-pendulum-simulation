@@ -38,14 +38,14 @@ void DoublePendulum::Draw()
     DrawCircleV(center, CIRCLE_RADIUS, RED);
 
     Vector2 nextCenter = { center.x + METRES_TO_PIXELS * _length1 * sinf(_angle1),
-        center.y + METRES_TO_PIXELS * _length1 * cosf(_angle1) };
+        center.y - METRES_TO_PIXELS * _length1 * cosf(_angle1) };
 
     DrawCircleV(nextCenter, CIRCLE_RADIUS, GREEN);
     DrawLineV(center, nextCenter, BLACK);
 
     center = nextCenter;
     nextCenter = { center.x + METRES_TO_PIXELS * _length2 * sinf(_angle2),
-        center.y + METRES_TO_PIXELS * _length2 * cosf(_angle2) };
+        center.y - METRES_TO_PIXELS * _length2 * cosf(_angle2) };
 
     DrawCircleV(nextCenter, CIRCLE_RADIUS, BLUE);
     DrawLineV(center, nextCenter, BLACK);
@@ -66,40 +66,25 @@ Vector4 DoublePendulum::EquationOfMotion(Vector4 angles)
     float& theta1Dot = angles.z;
     float& theta2Dot = angles.w;
 
-    float alpha = theta1 - theta2;
-    float M = _mass1 + _mass2;
+    float gap = theta2 - theta1;
 
-    // theta1DDot Equation
-    float numerator = (
-        0.5f * _length1 * _mass2 * powf(theta1Dot, 2) * sinf(2 * alpha)
-        - _length2 * _mass2 * powf(theta2Dot, 2) * sinf(alpha)
-        + GRAVITY * _mass2 * cosf(alpha) * sin(theta2)
-        - M * GRAVITY * sinf(theta1)
-    );
-    float denominator = (
-        _length1 * _mass2 * powf(cosf(alpha), 2)
-        - M * _length1
-    );
-    float theta1DDot = numerator / denominator;
-    
-    // theta2DDot Equation
-    numerator = (
-        0.5 * _length2 * _mass2 * powf(theta2Dot, 2) * sinf(2 * alpha)
-        - M * _length1 * powf(theta1Dot, 2) * sin(alpha)
-        + M * GRAVITY * cosf(alpha) * sinf(theta1)
-        - M * GRAVITY * sinf(theta2)
-    );
-    denominator = (
-        _length2 * _mass2 * powf(cosf(alpha), 2)
-        - M * _length2
-    );
+    float denominator = _length1 * _mass2 * cosf(2 * gap)
+        - 2 * _length1 * _mass1
+        - _length1 * _mass2;
+    float numerator = 2 * _length2 * _mass2 * powf(theta2Dot, 2) * sinf(gap)
+        + _length1 * _mass2 * powf(theta1Dot, 2) * sinf(2 * gap)
+        - GRAVITY * _mass2 * sinf(2 * theta2 - theta1)
+        + (2 * GRAVITY * _mass1 + GRAVITY * _mass2) * sinf(theta1);
+    float theta1DDot = -numerator / denominator;
+
+    denominator = _length2 * _mass2 * cosf(2 * gap)
+        - 2 * _length2 * _mass1
+        - _length2 * _mass2;
+    numerator = _length2 * _mass2 * powf(theta2Dot, 2) * sinf(2 * gap)
+        + 2 * (_length1 * _mass1 + _length1 * _mass2) * powf(theta1Dot, 2) * sinf(gap)
+        - (GRAVITY * _mass1 + GRAVITY * _mass2) * sinf(theta2 - 2 * theta1)
+        - (GRAVITY * _mass1 + GRAVITY * _mass2) * sinf(theta2);
     float theta2DDot = numerator / denominator;
 
-    // Return d/dt (angles)
-    return { 
-        theta1Dot,
-        theta2Dot,
-        theta1DDot,
-        theta2DDot
-    };
+    return { theta1Dot, theta2Dot, theta1DDot, theta2DDot };
 }
