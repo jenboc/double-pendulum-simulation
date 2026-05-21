@@ -30,25 +30,24 @@ DoublePendulum::DoublePendulum(OdeSolver<Vector4> solver, float stepSize)
 
 void DoublePendulum::Draw()
 {
-    Vector2 center = { _originX, _originY };
+    Vector2 centre1 = { _originX, _originY };
+    Vector2 centre2 = {
+        centre1.x + METRES_TO_PIXELS * _length1 * sinf(_angle1),
+        centre1.y - METRES_TO_PIXELS * _length1 * cosf(_angle1)
+    };
+    Vector2 centre3 = {
+        centre2.x + METRES_TO_PIXELS * _length2 * sinf(_angle2),
+        centre2.y - METRES_TO_PIXELS * _length2 * cosf(_angle2)
+    };
 
-    // Circles at origin & ends of pendulums
-    // Connect the circles with lines
+    // Draw lines first
+    DrawLineV(centre1, centre2, BLACK);
+    DrawLineV(centre2, centre3, BLACK);
 
-    DrawCircleV(center, CIRCLE_RADIUS, RED);
-
-    Vector2 nextCenter = { center.x + METRES_TO_PIXELS * _length1 * sinf(_angle1),
-        center.y - METRES_TO_PIXELS * _length1 * cosf(_angle1) };
-
-    DrawCircleV(nextCenter, CIRCLE_RADIUS, GREEN);
-    DrawLineV(center, nextCenter, BLACK);
-
-    center = nextCenter;
-    nextCenter = { center.x + METRES_TO_PIXELS * _length2 * sinf(_angle2),
-        center.y - METRES_TO_PIXELS * _length2 * cosf(_angle2) };
-
-    DrawCircleV(nextCenter, CIRCLE_RADIUS, BLUE);
-    DrawLineV(center, nextCenter, BLACK);
+    // Draw circles
+    DrawCircleV(centre1, CIRCLE_RADIUS, RED);
+    DrawCircleV(centre2, CIRCLE_RADIUS, GREEN);
+    DrawCircleV(centre3, CIRCLE_RADIUS, BLUE);
 }
 
 void DoublePendulum::Update()
