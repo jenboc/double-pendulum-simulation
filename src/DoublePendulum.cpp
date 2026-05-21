@@ -1,16 +1,18 @@
 #include "DoublePendulum.hpp"
 #include "solving/ForwardEuler.hpp"
+#include "solving/RungeKutta.hpp"
 #include <cmath>
 
+constexpr float METRES_TO_PIXELS = 100.0f;
 
-DoublePendulum::DoublePendulum() : _solver(std::make_unique<ForwardEuler<Vector4>>())
+DoublePendulum::DoublePendulum() : _solver(std::make_unique<RungeKutta<Vector4>>(RungeKutta<Vector4>::HeunsMethod()))
 {
     std::function<Vector4(float, Vector4)> f = [this](float, Vector4 angles)
     {
         return this->EquationOfMotion(angles);
     };
 
-    _solver->SetStepSize(0.000001f);
+    _solver->SetStepSize(0.001f);
     _solver->SetOde(f, { _angle1, _angle2, 0, 0 });
 }
 
@@ -35,25 +37,23 @@ void DoublePendulum::Draw()
 
     DrawCircleV(center, CIRCLE_RADIUS, RED);
 
-    Vector2 nextCenter = { center.x + _length1 * sinf(_angle1),
-        center.y + _length1 * cosf(_angle1) };
+    Vector2 nextCenter = { center.x + METRES_TO_PIXELS * _length1 * sinf(_angle1),
+        center.y + METRES_TO_PIXELS * _length1 * cosf(_angle1) };
 
     DrawCircleV(nextCenter, CIRCLE_RADIUS, GREEN);
     DrawLineV(center, nextCenter, BLACK);
 
     center = nextCenter;
-    nextCenter = { center.x + _length2 * sinf(_angle2),
-        center.y + _length2 * cosf(_angle2) };
+    nextCenter = { center.x + METRES_TO_PIXELS * _length2 * sinf(_angle2),
+        center.y + METRES_TO_PIXELS * _length2 * cosf(_angle2) };
 
     DrawCircleV(nextCenter, CIRCLE_RADIUS, BLUE);
     DrawLineV(center, nextCenter, BLACK);
 }
 
-#include <iostream>
 void DoublePendulum::Update()
 {
     Vector4 newAngles = _solver->DoStep();
-    std::cout << newAngles.x << ", " << newAngles.y << ", " << newAngles.z << ", " << newAngles.w << std::endl;
     _angle1 = newAngles.x;
     _angle2 = newAngles.y;
 }
@@ -80,7 +80,7 @@ Vector4 DoublePendulum::EquationOfMotion(Vector4 angles)
         _length1 * _mass2 * powf(cosf(alpha), 2)
         - M * _length1
     );
-    float theta1DDot = -numerator / denominator;
+    float theta1DDot = numerator / denominator;
     
     // theta2DDot Equation
     numerator = (

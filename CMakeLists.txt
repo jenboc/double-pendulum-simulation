@@ -22,6 +22,7 @@ add_executable(double-pendulum
     src/main.cpp
     src/Application.cpp
     src/DoublePendulum.cpp
+    src/solving/VectorExtensions.cpp
 )
 
 # ----------------------------------------

@@ -21,12 +21,12 @@ private:
     float _originX {static_cast<float>(SCREEN_WIDTH) / 2.0f};
     float _originY {static_cast<float>(SCREEN_HEIGHT) / 2.0f};
 
-    float _length1 { 100.0f };
-    float _length2 { 100.0f };
-    float _angle1 { PI / 2 };
+    float _length1 { 1.0f };
+    float _length2 { 1.0f };
+    float _angle1 { PI };
     float _angle2 { PI / 2 };
-    float _mass1 { 1 };
-    float _mass2 { 1 };
+    float _mass1 { 2 };
+    float _mass2 { 2 };
 
     // Equation of Motion given as a vector ODE
     Vector4 EquationOfMotion(Vector4 angles);
