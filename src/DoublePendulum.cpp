@@ -5,9 +5,9 @@
 
 constexpr float METRES_TO_PIXELS = 100.0f;
 
-DoublePendulum::DoublePendulum() : _solver(std::make_unique<RungeKutta<Vector4>>(RungeKutta<Vector4>::HeunsMethod()))
+DoublePendulum::DoublePendulum() : _solver(std::make_unique<RungeKutta<glm::vec4>>(RungeKutta<glm::vec4>::HeunsMethod()))
 {
-    std::function<Vector4(float, Vector4)> f = [this](float, Vector4 angles)
+    std::function<glm::vec4(float, glm::vec4)> f = [this](float, glm::vec4 angles)
     {
         return this->EquationOfMotion(angles);
     };
@@ -16,10 +16,10 @@ DoublePendulum::DoublePendulum() : _solver(std::make_unique<RungeKutta<Vector4>>
     _solver->SetOde(f, { _angle1, _angle2, 0, 0 });
 }
 
-DoublePendulum::DoublePendulum(OdeSolver<Vector4> solver, float stepSize)
-    : _solver(std::make_unique<OdeSolver<Vector4>>(solver))
+DoublePendulum::DoublePendulum(OdeSolver<glm::vec4> solver, float stepSize)
+    : _solver(std::make_unique<OdeSolver<glm::vec4>>(solver))
 {
-    std::function<Vector4(float, Vector4)> f = [this](float, Vector4 angles)
+    std::function<glm::vec4(float, glm::vec4)> f = [this](float, glm::vec4 angles)
     {
         return this->EquationOfMotion(angles);
     };
@@ -28,36 +28,40 @@ DoublePendulum::DoublePendulum(OdeSolver<Vector4> solver, float stepSize)
     _solver->SetOde(f, { _angle1, _angle2, 0, 0 });
 }
 
-void DoublePendulum::Draw()
+void DoublePendulum::Draw(Renderer& renderer)
 {
-    Vector2 centre1 = { _originX, _originY };
-    Vector2 centre2 = {
+    glm::vec2 centre1 { _originX, _originY };
+    glm::vec2 centre2 {
         centre1.x + METRES_TO_PIXELS * _length1 * sinf(_angle1),
         centre1.y - METRES_TO_PIXELS * _length1 * cosf(_angle1)
     };
-    Vector2 centre3 = {
+    glm::vec2 centre3 {
         centre2.x + METRES_TO_PIXELS * _length2 * sinf(_angle2),
         centre2.y - METRES_TO_PIXELS * _length2 * cosf(_angle2)
     };
 
+    glm::vec3 black { 0.0f, 0.0f, 0.0f };
+    glm::vec3 green { 0.0f, 1.0f, 0.0f };
+    glm::vec3 blue { 0.0f, 0.0f, 1.0f };
+
     // Draw lines first
-    DrawLineV(centre1, centre2, BLACK);
-    DrawLineV(centre2, centre3, BLACK);
+    renderer.DrawLine(centre1, centre2, black);
+    renderer.DrawLine(centre2, centre3, black);
 
     // Draw circles
-    DrawCircleV(centre1, CIRCLE_RADIUS, RED);
-    DrawCircleV(centre2, CIRCLE_RADIUS, GREEN);
-    DrawCircleV(centre3, CIRCLE_RADIUS, BLUE);
+    renderer.DrawCircle(centre1, CIRCLE_RADIUS / 2, black);
+    renderer.DrawCircle(centre2, CIRCLE_RADIUS, green);
+    renderer.DrawCircle(centre3, CIRCLE_RADIUS, blue);
 }
 
 void DoublePendulum::Update()
 {
-    Vector4 newAngles = _solver->DoStep();
+    glm::vec4 newAngles = _solver->DoStep();
     _angle1 = newAngles.x;
     _angle2 = newAngles.y;
 }
 
-Vector4 DoublePendulum::EquationOfMotion(Vector4 angles)
+glm::vec4 DoublePendulum::EquationOfMotion(glm::vec4 angles)
 {
     // angles = (angle1, angle2, d_angle1, d_angle2)
     float& theta1 = angles.x;

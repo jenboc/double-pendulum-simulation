@@ -2,6 +2,7 @@
 
 #include <raylib.h>
 #include <memory>
+#include "rendering/Renderer.hpp"
 #include "solving/OdeSolver.hpp"
 #include "AppSettings.hpp"
 
@@ -12,11 +13,11 @@ class DoublePendulum
 {
 public:
     DoublePendulum();
-    DoublePendulum(OdeSolver<Vector4> solver, float stepSize);
-    void Draw();
+    DoublePendulum(OdeSolver<glm::vec4> solver, float stepSize);
+    void Draw(Renderer& renderer);
     void Update();
 private:
-    std::unique_ptr<OdeSolver<Vector4>> _solver;
+    std::unique_ptr<OdeSolver<glm::vec4>> _solver;
     
     float _originX {static_cast<float>(SCREEN_WIDTH) / 2.0f};
     float _originY {static_cast<float>(SCREEN_HEIGHT) / 2.0f};
@@ -29,5 +30,5 @@ private:
     float _mass2 { 2 };
 
     // Equation of Motion given as a vector ODE
-    Vector4 EquationOfMotion(Vector4 angles);
+    glm::vec4 EquationOfMotion(glm::vec4 angles);
 };

@@ -26,12 +26,13 @@ add_executable(double-pendulum
 )
 
 # ----------------------------------------
-# raylib - Find system installation
+# Find required packages on system
 # ----------------------------------------
 
 find_package(raylib REQUIRED)
+find_package(glm REQUIRED)
 
-target_link_libraries(double-pendulum PRIVATE raylib)
+target_link_libraries(double-pendulum PRIVATE raylib glm::glm)
 
 # ----------------------------------------
 # Compiler warnings
