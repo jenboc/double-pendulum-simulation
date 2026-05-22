@@ -11,12 +11,19 @@ public:
     {
         _stepSize = stepSize;
     }
+
     void SetOde(std::function<T(float, T)> f, T initial)
     {
         _f = f;
         _t = 0;
         _lastStep = initial;
     }
+
+    void SetStep(T step)
+    {
+        _lastStep = step;
+    }
+
     virtual T DoStep()
     {
         throw std::logic_error("Not Implemented");

@@ -2,6 +2,7 @@
 
 #include <raylib.h>
 #include <memory>
+#include "Input.hpp"
 #include "rendering/Renderer.hpp"
 #include "solving/OdeSolver.hpp"
 #include "AppSettings.hpp"
@@ -15,7 +16,8 @@ public:
     DoublePendulum();
     DoublePendulum(OdeSolver<glm::vec4> solver, float stepSize);
     void Draw(Renderer& renderer);
-    void Update();
+    void Update(const Input& input, bool isPhysicsPaused);
+    void PhysicsUpdate();
 private:
     std::unique_ptr<OdeSolver<glm::vec4>> _solver;
     
@@ -31,4 +33,18 @@ private:
 
     // Equation of Motion given as a vector ODE
     glm::vec4 EquationOfMotion(glm::vec4 angles);
+    
+    // Reset velocity
+    void ResetDeltas();
+
+    // Calculate mass centres
+    std::tuple<glm::vec2, glm::vec2, glm::vec2> CalculateMassCentres();
+
+    enum class Masses
+    {
+        Mass1,
+        Mass2,
+        None
+    };
+    Masses _selectedMass { Masses::None };
 };
