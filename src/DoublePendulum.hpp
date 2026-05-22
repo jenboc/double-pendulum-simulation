@@ -16,6 +16,7 @@ public:
     DoublePendulum(OdeSolver<glm::vec4> solver, float stepSize);
     void Draw(Renderer& renderer);
     void Update();
+    void ResetDeltas();
 private:
     std::unique_ptr<OdeSolver<glm::vec4>> _solver;
     

@@ -28,6 +28,11 @@ DoublePendulum::DoublePendulum(OdeSolver<glm::vec4> solver, float stepSize)
     _solver->SetOde(f, { _angle1, _angle2, 0, 0 });
 }
 
+void DoublePendulum::ResetDeltas()
+{
+    _solver->SetStep({ _angle1, _angle2, 0, 0 });
+}
+
 void DoublePendulum::Draw(Renderer& renderer)
 {
     glm::vec2 centre1 { _originX, _originY };

@@ -2,6 +2,7 @@
 #include "Application.hpp"
 #include "FrameTimer.hpp"
 #include "AppSettings.hpp"
+#include "RaylibInput.hpp"
 #include "rendering/RaylibRenderer.hpp"
 #include "rendering/RaylibWindow.hpp"
 
@@ -12,6 +13,7 @@ Application::Application()
     : _renderer(std::make_unique<RaylibRenderer>()),
       _window(std::make_unique<RaylibWindow>(SCREEN_WIDTH, SCREEN_HEIGHT,
                   SCREEN_TITLE)),
+      _input(std::make_unique<RaylibInput>()),
       _pendulum() 
 {
 }
@@ -29,6 +31,8 @@ void Application::MainLoop()
     while (!_window->ShouldClose())
     {
         accumulator += TIME_SCALE * timer.GetFrameTime();
+        
+        Update();
         
         while (accumulator >= PHYSICS_DT)
         {
@@ -50,7 +54,19 @@ void Application::Draw()
     _renderer->StopDrawing();
 }
 
+void Application::Update()
+{
+    if (_input->IsSpacePressed())
+        _physicsPaused = !_physicsPaused;
+
+    if (_input->IsRPressed())
+        _pendulum.ResetDeltas();
+}
+
 void Application::PhysicsUpdate()
 {
+    if (_physicsPaused)
+        return;
+
     _pendulum.Update();    
 }
