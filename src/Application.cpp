@@ -8,11 +8,12 @@
 constexpr double PHYSICS_DT = 1.0 / 1000.0;
 constexpr double TIME_SCALE = 1.0f;
 
-Application::Application() : _pendulum()
+Application::Application() 
+    : _renderer(std::make_unique<RaylibRenderer>()),
+      _window(std::make_unique<RaylibWindow>(SCREEN_WIDTH, SCREEN_HEIGHT,
+                  SCREEN_TITLE)),
+      _pendulum() 
 {
-    _window = std::make_unique<RaylibWindow>(SCREEN_WIDTH, SCREEN_HEIGHT,
-            SCREEN_TITLE);
-    _renderer = std::make_unique<RaylibRenderer>();
 }
 
 void Application::Run()
