@@ -3,6 +3,9 @@
 #include "solving/RungeKutta.hpp"
 #include <cmath>
 
+#define GLM_ENABLE_EXPERIMENTAL 
+#include <glm/gtx/norm.hpp>
+
 constexpr float METRES_TO_PIXELS = 100.0f;
 
 DoublePendulum::DoublePendulum() : _solver(std::make_unique<RungeKutta<glm::vec4>>(RungeKutta<glm::vec4>::HeunsMethod()))
@@ -35,16 +38,7 @@ void DoublePendulum::ResetDeltas()
 
 void DoublePendulum::Draw(Renderer& renderer)
 {
-    glm::vec2 centre1 { _originX, _originY };
-    glm::vec2 centre2 {
-        centre1.x + METRES_TO_PIXELS * _length1 * sinf(_angle1),
-        centre1.y - METRES_TO_PIXELS * _length1 * cosf(_angle1)
-    };
-    glm::vec2 centre3 {
-        centre2.x + METRES_TO_PIXELS * _length2 * sinf(_angle2),
-        centre2.y - METRES_TO_PIXELS * _length2 * cosf(_angle2)
-    };
-
+    auto [centre1, centre2, centre3] = CalculateMassCentres();
     glm::vec3 black { 0.0f, 0.0f, 0.0f };
     glm::vec3 green { 0.0f, 1.0f, 0.0f };
     glm::vec3 blue { 0.0f, 0.0f, 1.0f };
@@ -59,7 +53,49 @@ void DoublePendulum::Draw(Renderer& renderer)
     renderer.DrawCircle(centre3, CIRCLE_RADIUS, blue);
 }
 
-void DoublePendulum::Update()
+void DoublePendulum::Update(const Input& input, bool isPhysicsPaused)
+{
+    if (input.IsRPressed())
+        ResetDeltas();
+
+    // Can only move a ball if physics is paused
+    if (!isPhysicsPaused)
+        return;
+
+    if (!input.IsLeftMouseDown())
+    {
+        if (_selectedMass != Masses::None)
+        {
+            _selectedMass = Masses::None;
+            ResetDeltas();
+        }
+        return;
+    }
+
+    const glm::vec2 mousePos = input.GetMousePosition();
+    auto [centre1, centre2, centre3] = CalculateMassCentres();
+
+    // None selected => try to select
+    constexpr float radius_squared = CIRCLE_RADIUS * CIRCLE_RADIUS;
+    if (_selectedMass == Masses::None)
+    {
+        if (glm::length2(mousePos - centre2) <= radius_squared)
+            _selectedMass = Masses::Mass1;
+        else if (glm::length2(mousePos - centre3) <= radius_squared)
+            _selectedMass = Masses::Mass2;
+
+        return;
+    }
+
+    // One is selected => move it
+    float& angle = (_selectedMass == Masses::Mass1) ? _angle1 : _angle2;
+    const glm::vec2& pivot = (_selectedMass == Masses::Mass1) ? centre1 : centre2;
+
+    glm::vec2 pivotToMouse = glm::normalize(mousePos - pivot);
+    angle = atan2f(pivotToMouse.x, -pivotToMouse.y);
+}
+
+void DoublePendulum::PhysicsUpdate()
 {
     glm::vec4 newAngles = _solver->DoStep();
     _angle1 = newAngles.x;
@@ -95,4 +131,19 @@ glm::vec4 DoublePendulum::EquationOfMotion(glm::vec4 angles)
     float theta2DDot = numerator / denominator;
 
     return { theta1Dot, theta2Dot, theta1DDot, theta2DDot };
+}
+
+std::tuple<glm::vec2, glm::vec2, glm::vec2> DoublePendulum::CalculateMassCentres()
+{
+    glm::vec2 centre1 { _originX, _originY };
+    glm::vec2 centre2 {
+        centre1.x + METRES_TO_PIXELS * _length1 * sinf(_angle1),
+        centre1.y - METRES_TO_PIXELS * _length1 * cosf(_angle1)
+    };
+    glm::vec2 centre3 {
+        centre2.x + METRES_TO_PIXELS * _length2 * sinf(_angle2),
+        centre2.y - METRES_TO_PIXELS * _length2 * cosf(_angle2)
+    };
+
+    return { centre1, centre2, centre3 };
 }

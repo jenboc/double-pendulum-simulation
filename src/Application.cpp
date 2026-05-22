@@ -59,8 +59,7 @@ void Application::Update()
     if (_input->IsSpacePressed())
         _physicsPaused = !_physicsPaused;
 
-    if (_input->IsRPressed())
-        _pendulum.ResetDeltas();
+    _pendulum.Update(*_input, _physicsPaused);
 }
 
 void Application::PhysicsUpdate()
@@ -68,5 +67,5 @@ void Application::PhysicsUpdate()
     if (_physicsPaused)
         return;
 
-    _pendulum.Update();    
+    _pendulum.PhysicsUpdate(); 
 }
