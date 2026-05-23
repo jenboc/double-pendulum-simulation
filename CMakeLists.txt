@@ -32,7 +32,22 @@ add_executable(double-pendulum
 find_package(raylib REQUIRED)
 find_package(glm REQUIRED)
 
+# ----------------------------------------
+# ImGUI is included via git submodules
+# ----------------------------------------
+
+set(IMGUI_SOURCES
+    external/imgui/imgui.cpp
+    external/imgui/imgui_draw.cpp
+    external/imgui/imgui_tables.cpp
+    external/imgui/imgui_widgets.cpp
+)
+
+add_library(imgui ${IMGUI_SOURCES})
+
+
 target_link_libraries(double-pendulum PRIVATE raylib glm::glm)
+target_include_directories(imgui PUBLIC external/imgui)
 
 # ----------------------------------------
 # Compiler warnings
