@@ -2,6 +2,7 @@
 
 #include "Renderer.hpp"
 #include "RaylibShader.hpp"
+#include <rlgl.h>
 #include <raylib.h>
 #include <rlImGui.h>
 
@@ -63,6 +64,12 @@ namespace Engine::Rendering
                 DrawLineV(start, end, ToRaylibColour(colour));   
             }
 
+            void DrawRectangle(glm::vec2 c1, glm::vec2 c2, glm::vec3 colour) override
+            {
+                glm::vec2 size = c2 - c1;
+                DrawRectangleV({ c1.x, c1.y }, { size.x, size.y }, ToRaylibColour(colour));
+            }
+
             void DrawCircle(glm::vec2 centre, float radius, glm::vec3 colour) override
             {
                 Vector2 c { centre.x, centre.y };
@@ -75,6 +82,7 @@ namespace Engine::Rendering
                 if (_activeShader)
                     _activeShader->Disable();
 
+                rlDrawRenderBatchActive();
                 _activeShader = shader;
 
                 if (_activeShader)

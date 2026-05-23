@@ -2,7 +2,6 @@
 
 #include <raylib.h>
 #include "Shader.hpp"
-#include <iostream>
 
 namespace Engine::Rendering
 {
@@ -11,18 +10,23 @@ namespace Engine::Rendering
     public: 
         RaylibShader(const std::string& vertexPath, const std::string& fragmentPath)
         {
-            _raylibShader = LoadShader(vertexPath.c_str(), fragmentPath.c_str());
+            const char *vert = (vertexPath.length() > 0)
+                ? TextFormat(vertexPath.c_str(), GLSL_VERSION)
+                : nullptr;
+
+            const char *frag = (fragmentPath.length() > 0)
+                ? TextFormat(fragmentPath.c_str(), GLSL_VERSION)
+                : nullptr;
+            _raylibShader = LoadShader(vert, frag);
         }
 
         void Enable() override
         {
-            std::cout << "Enabled" << std::endl;
             BeginShaderMode(_raylibShader);
         }
 
         void Disable() override
         {
-            std::cout << "Disabled" << std::endl;
             EndShaderMode();
         }
 
@@ -38,6 +42,14 @@ namespace Engine::Rendering
             int loc = GetShaderLocation(_raylibShader, uniformName.c_str());
             SetShaderValue(_raylibShader, loc, &raylibVec, SHADER_UNIFORM_VEC3);
         }
+
+        void SetVector2(const std::string& uniformName, glm::vec2 vec) override
+        {
+            Vector2 raylibVec = { vec.x, vec.y };
+            int loc = GetShaderLocation(_raylibShader, uniformName.c_str());
+            SetShaderValue(_raylibShader, loc, &raylibVec, SHADER_UNIFORM_VEC2);
+        }
+
     private:
         ::Shader _raylibShader;
     };

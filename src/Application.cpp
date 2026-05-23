@@ -21,7 +21,7 @@ Application::Application()
       _input(std::make_unique<RaylibInput>()),
       _pendulum() 
 {
-    _renderer->LoadShader("background", "shaders/background.vs", "shaders/background.fs");
+    _renderer->LoadShader("background", "", "shaders/background.fs");
 }
 
 void Application::Run()
@@ -52,11 +52,35 @@ void Application::MainLoop()
 
 void Application::Draw()
 {
+    auto [centre1, centre2, centre3] = _pendulum.CalculateMassCentres();
+    centre1.y = SCREEN_HEIGHT - centre1.y;
+    centre2.y = SCREEN_HEIGHT - centre2.y;
+    centre3.y = SCREEN_HEIGHT - centre3.y;
+
+    constexpr float lightRadius = 50 * 50;
+
     _renderer->StartDrawing();
 
     _renderer->FillBackground({ 1.0f, 1.0f, 1.0f });
-    
+
     _pendulum.Draw(*_renderer);
+
+    if (_lightsOff)
+    {
+        _renderer->EnableShader("background");
+
+        auto shader = _renderer->GetActiveShader();
+        shader->SetVector2("lights[0].position", centre1);
+        shader->SetVector2("lights[1].position", centre2);
+        shader->SetVector2("lights[2].position", centre3);
+        shader->SetFloat("lights[0].lightRadius", lightRadius / 4);
+        shader->SetFloat("lights[1].lightRadius", lightRadius);
+        shader->SetFloat("lights[2].lightRadius", lightRadius);
+
+        _renderer->DrawRectangle({ 0.0f, 0.0f }, { SCREEN_WIDTH, SCREEN_HEIGHT },
+                { 0.0f, 0.0f, 0.0f });
+        _renderer->ClearShader();
+    }
 
     _renderer->StartUI();
     DrawUI();
@@ -98,6 +122,9 @@ void Application::Update()
 {
     if (_input->IsSpacePressed())
         _physicsPaused = !_physicsPaused;
+
+    if (_input->IsFPressed())
+        _lightsOff = !_lightsOff;
 
     _pendulum.Update(*_input, _physicsPaused);
 }

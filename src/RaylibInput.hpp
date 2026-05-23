@@ -18,6 +18,12 @@ namespace Engine::Core
                 return IsKeyPressed(KEY_R);
             }
 
+            bool IsFPressed() const override
+            {
+                return IsKeyPressed(KEY_F);
+            }
+
+
             glm::vec2 GetMousePosition() const override
             {
                 Vector2 mousePos = ::GetMousePosition();

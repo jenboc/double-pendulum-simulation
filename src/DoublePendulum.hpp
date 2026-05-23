@@ -22,6 +22,8 @@ namespace Engine::Core
             std::pair<float&, float&> GetAngles();
             std::pair<float&, float&> GetMasses();
 
+            std::tuple<glm::vec2, glm::vec2, glm::vec2> CalculateMassCentres();
+            
             void Draw(Rendering::Renderer& renderer);
             void Update(const Input& input, bool isPhysicsPaused);
             void PhysicsUpdate();
@@ -44,8 +46,6 @@ namespace Engine::Core
             // Reset velocity
             void ResetDeltas();
 
-            // Calculate mass centres
-            std::tuple<glm::vec2, glm::vec2, glm::vec2> CalculateMassCentres();
 
             enum class Masses
             {

@@ -22,6 +22,7 @@ namespace Engine::Core
             std::unique_ptr<Input> _input;
             DoublePendulum _pendulum;
             bool _physicsPaused { false };
+            bool _lightsOff { true };
 
 
             void MainLoop();
