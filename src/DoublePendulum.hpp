@@ -15,6 +15,11 @@ class DoublePendulum
 public:
     DoublePendulum();
     DoublePendulum(OdeSolver<glm::vec4> solver, float stepSize);
+
+    std::pair<float&, float&> GetLengths();
+    std::pair<float&, float&> GetAngles();
+    std::pair<float&, float&> GetMasses();
+
     void Draw(Renderer& renderer);
     void Update(const Input& input, bool isPhysicsPaused);
     void PhysicsUpdate();

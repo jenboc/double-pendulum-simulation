@@ -2,10 +2,21 @@
 
 #include "Renderer.hpp"
 #include <raylib.h>
+#include <rlImGui.h>
 
 class RaylibRenderer : public Renderer
 {
 public:
+    RaylibRenderer(bool darkUi = true)
+    {
+        rlImGuiSetup(darkUi);
+    }
+
+    ~RaylibRenderer()
+    {
+        rlImGuiShutdown();
+    }
+
     void StartDrawing() override
     {
         BeginDrawing();
@@ -14,6 +25,16 @@ public:
     void StopDrawing() override
     {
         EndDrawing();
+    }
+
+    void StartUI() override
+    {
+        rlImGuiBegin();
+    }
+
+    void StopUI() override
+    {
+        rlImGuiEnd();
     }
 
     void FillBackground(glm::vec3 colour) override

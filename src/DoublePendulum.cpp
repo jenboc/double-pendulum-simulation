@@ -147,3 +147,18 @@ std::tuple<glm::vec2, glm::vec2, glm::vec2> DoublePendulum::CalculateMassCentres
 
     return { centre1, centre2, centre3 };
 }
+
+std::pair<float&, float&> DoublePendulum::GetLengths()
+{
+    return { _length1, _length2 };
+}
+
+std::pair<float&, float&> DoublePendulum::GetAngles()
+{
+    return { _angle1, _angle2 };
+}
+
+std::pair<float&, float&> DoublePendulum::GetMasses()
+{
+    return { _mass1, _mass2 };
+}
