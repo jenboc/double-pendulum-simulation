@@ -15,8 +15,8 @@ public:
     Application();
     void Run();
 private:
-    std::unique_ptr<Renderer> _renderer;
     std::unique_ptr<Window> _window;
+    std::unique_ptr<Renderer> _renderer;
     std::unique_ptr<Input> _input;
     DoublePendulum _pendulum;
     bool _physicsPaused { false };
@@ -26,4 +26,5 @@ private:
     void Update();
     void PhysicsUpdate();
     void Draw();
+    void DrawUI();
 };
