@@ -4,8 +4,12 @@
 #include "FrameTimer.hpp"
 #include "AppSettings.hpp"
 #include "RaylibInput.hpp"
+#include "rendering/RaylibShader.hpp"
 #include "rendering/RaylibRenderer.hpp"
 #include "rendering/RaylibWindow.hpp"
+
+using namespace Engine::Core;
+using namespace Engine::Rendering;
 
 constexpr double PHYSICS_DT = 1.0 / 1000.0;
 constexpr double TIME_SCALE = 1.0f;
@@ -17,6 +21,7 @@ Application::Application()
       _input(std::make_unique<RaylibInput>()),
       _pendulum() 
 {
+    _renderer->LoadShader("background", "shaders/background.vs", "shaders/background.fs");
 }
 
 void Application::Run()
@@ -49,7 +54,8 @@ void Application::Draw()
 {
     _renderer->StartDrawing();
 
-    _renderer->FillBackground(glm::vec3 { 1.0f, 1.0f, 1.0f });
+    _renderer->FillBackground({ 1.0f, 1.0f, 1.0f });
+    
     _pendulum.Draw(*_renderer);
 
     _renderer->StartUI();

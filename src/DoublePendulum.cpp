@@ -3,6 +3,10 @@
 #include "solving/RungeKutta.hpp"
 #include <cmath>
 
+using namespace Engine::Core;
+using namespace Engine::DESolvers;
+using namespace Engine::Rendering;
+
 #define GLM_ENABLE_EXPERIMENTAL 
 #include <glm/gtx/norm.hpp>
 

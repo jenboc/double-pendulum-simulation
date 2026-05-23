@@ -4,42 +4,45 @@
 #include <raylib.h>
 #include <string>
 
-class RaylibWindow : public Window
+namespace Engine::Rendering
 {
-public:
-    RaylibWindow(int width, int height, const std::string& title, int fps = 60)
+    class RaylibWindow : public Window
     {
-        InitWindow(width, height, title.c_str());
-        SetTargetFPS(fps);
-    }
+        public:
+            RaylibWindow(int width, int height, const std::string& title, int fps = 60)
+            {
+                InitWindow(width, height, title.c_str());
+                SetTargetFPS(fps);
+            }
 
-    ~RaylibWindow()
-    {
-        CloseWindow();
-    }
+            ~RaylibWindow()
+            {
+                CloseWindow();
+            }
 
-    bool ShouldClose() override
-    {
-        return WindowShouldClose();
-    }
+            bool ShouldClose() override
+            {
+                return WindowShouldClose();
+            }
 
-    void PollEvents() override
-    {
-        // Handled by raylib
-    }
+            void PollEvents() override
+            {
+                // Handled by raylib
+            }
 
-    void SwapBuffers() override
-    {
-        // Handled by raylib
-    }
+            void SwapBuffers() override
+            {
+                // Handled by raylib
+            }
 
-    int GetWidth() override
-    {
-        return GetScreenWidth();
-    }
+            int GetWidth() override
+            {
+                return GetScreenWidth();
+            }
 
-    int GetHeight() override
-    {
-        return GetScreenHeight();
-    }
-};
+            int GetHeight() override
+            {
+                return GetScreenHeight();
+            }
+    };
+}

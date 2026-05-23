@@ -1,22 +1,24 @@
 #pragma once
 
 #include <raylib.h>
-#include "VectorExtensions.hpp"
 #include "OdeSolver.hpp"
 
-template <typename T>
-class ForwardEuler : public OdeSolver<T>
+namespace Engine::DESolvers
 {
-public:
-    T DoStep() override
+    template <typename T>
+    class ForwardEuler : public OdeSolver<T>
     {
-        if (!this->CanStep())
-            throw std::logic_error("Please ensure step size and f are set");
+        public:
+            T DoStep() override
+            {
+                if (!this->CanStep())
+                    throw std::logic_error("Please ensure step size and f are set");
 
-        this->_lastStep = this->_lastStep + this->_f(this->_t,
-                this->_lastStep);
-        this->_t += this->_stepSize;
+                this->_lastStep = this->_lastStep + this->_f(this->_t,
+                        this->_lastStep);
+                this->_t += this->_stepSize;
 
-        return this->_lastStep;
-    }
-};
+                return this->_lastStep;
+            }
+    };
+}
