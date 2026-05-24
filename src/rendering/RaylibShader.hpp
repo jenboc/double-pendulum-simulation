@@ -2,6 +2,8 @@
 
 #include <raylib.h>
 #include "Shader.hpp"
+#include "RaylibTexture.hpp"
+#include "RaylibRenderTexture.hpp"
 
 namespace Engine::Rendering
 {
@@ -48,6 +50,15 @@ namespace Engine::Rendering
             Vector2 raylibVec = { vec.x, vec.y };
             int loc = GetShaderLocation(_raylibShader, uniformName.c_str());
             SetShaderValue(_raylibShader, loc, &raylibVec, SHADER_UNIFORM_VEC2);
+        }
+
+        void SetTexture(const std::string& uniformName, std::shared_ptr<Texture> texture) override
+        {
+            auto rlTexture = std::static_pointer_cast<RaylibTexture>(texture);
+
+            int loc = GetShaderLocation(_raylibShader, uniformName.c_str());
+
+            SetShaderValueTexture(_raylibShader, loc, rlTexture->GetRawTexture());
         }
 
     private:

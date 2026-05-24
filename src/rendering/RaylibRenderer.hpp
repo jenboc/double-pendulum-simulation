@@ -2,6 +2,7 @@
 
 #include "Renderer.hpp"
 #include "RaylibShader.hpp"
+#include "RaylibRenderTexture.hpp"
 #include <rlgl.h>
 #include <raylib.h>
 #include <rlImGui.h>
@@ -11,7 +12,10 @@ namespace Engine::Rendering
     class RaylibRenderer : public Renderer
     {
         public:
-            RaylibRenderer(bool darkUi = true)
+            RaylibRenderer(int screenWidth, int screenHeight,
+                    bool darkUi = true)
+                : _screenWidth(screenWidth), _screenHeight(screenHeight),
+                  _sceneTexture(std::make_shared<RaylibRenderTexture>(screenWidth, screenHeight))
             {
                 rlImGuiSetup(darkUi);
             }
@@ -19,6 +23,11 @@ namespace Engine::Rendering
             ~RaylibRenderer()
             {
                 rlImGuiShutdown();
+            }
+
+            std::shared_ptr<Texture> LoadTexture(const std::string& path) override
+            {
+                return std::make_shared<RaylibTexture>(::LoadTexture(path.c_str()));
             }
 
             void LoadShader(const std::string& name, const std::string& vertexPath, const std::string& fragmentPath) override
@@ -40,6 +49,69 @@ namespace Engine::Rendering
             void StopDrawing() override
             {
                 EndDrawing();
+            }
+
+            void StartScene() override
+            {
+                BeginTextureMode(_sceneTexture->GetRawRenderTexture());
+                ClearBackground(BLACK);
+            }
+
+            void StopScene() override
+            {
+                EndTextureMode();
+            }
+
+            std::shared_ptr<Texture> GetSceneTexture() override
+            {
+                return _sceneTexture;
+            }
+
+            void DrawScene() override
+            {
+                Rectangle src {
+                    0,
+                    0,
+                    static_cast<float>(_sceneTexture->GetRawTexture().width),
+                    -static_cast<float>(_sceneTexture->GetRawTexture().height)
+                };
+
+                Rectangle dst {
+                    0,
+                    0,
+                    static_cast<float>(_screenWidth),
+                    static_cast<float>(_screenHeight)
+                };
+
+                DrawTexturePro(_sceneTexture->GetRawTexture(), src, dst, {0, 0}, 0.0f,
+                        WHITE);
+            }
+
+            void DrawTexture(std::shared_ptr<Texture> texture, glm::vec2 src1,
+                    glm::vec2 src2, glm::vec2 dst1, glm::vec2 dst2,
+                    glm::vec2 origin, float angle, glm::vec3 colour) override
+            {
+                auto rlTexture = std::static_pointer_cast<RaylibTexture>(texture);
+
+                Rectangle src {
+                    src1.x,
+                    src1.y,
+                    src2.x,
+                    src2.y
+                };
+
+                Rectangle dst {
+                    dst1.x,
+                    dst1.y,
+                    dst2.x,
+                    dst2.y
+                };
+
+                Vector2 rlOrigin { origin.x, origin.y };
+                Color rlColour = ToRaylibColour(colour);
+
+                DrawTexturePro(rlTexture->GetRawTexture(), src, dst, rlOrigin,
+                        angle, rlColour);
             }
 
             void StartUI() override
@@ -90,6 +162,10 @@ namespace Engine::Rendering
             }
 
         private:
+            int _screenWidth;
+            int _screenHeight;
+            std::shared_ptr<RaylibRenderTexture> _sceneTexture;
+
             static unsigned char ToColourBit(float f)
             {
                 f = glm::clamp(f, 0.0f, 1.0f) * 255.0f;

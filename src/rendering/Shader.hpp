@@ -2,6 +2,8 @@
 
 #include <glm/glm.hpp>
 #include <string>
+#include <memory>
+#include "Texture.hpp"
 
 namespace Engine::Rendering
 {
@@ -15,5 +17,6 @@ namespace Engine::Rendering
         virtual void SetFloat(const std::string& uniformName, float f) = 0;
         virtual void SetVector3(const std::string& uniformName, glm::vec3 vec) = 0;
         virtual void SetVector2(const std::string& uniformName, glm::vec2 vec) = 0;
+        virtual void SetTexture(const std::string& uniformName, std::shared_ptr<Texture> texture) = 0;
     };
 };

@@ -20,7 +20,8 @@ namespace Engine::Core
             std::unique_ptr<Rendering::Window> _window;
             std::unique_ptr<Rendering::Renderer> _renderer;
             std::unique_ptr<Input> _input;
-            
+ 
+            std::shared_ptr<Engine::Rendering::Texture> _backgroundTexture;
             DoublePendulum _pendulum;
             bool _physicsPaused { false };
             bool _lightsOff { true };

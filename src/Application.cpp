@@ -18,11 +18,12 @@ constexpr double TIME_SCALE = 1.0f;
 Application::Application() 
     : _window(std::make_unique<RaylibWindow>(SCREEN_WIDTH, SCREEN_HEIGHT,
                   SCREEN_TITLE)),
-      _renderer(std::make_unique<RaylibRenderer>()),
+      _renderer(std::make_unique<RaylibRenderer>(SCREEN_WIDTH, SCREEN_HEIGHT)),
       _input(std::make_unique<RaylibInput>()),
+      _backgroundTexture(_renderer->LoadTexture("background.png")),
       _pendulum() 
 {
-    _renderer->LoadShader("background", "", "shaders/background.fs");
+    _renderer->LoadShader("lighting", "", "shaders/lighting.fs");
 }
 
 void Application::Run()
@@ -63,13 +64,18 @@ void Application::Draw()
 
     _renderer->StartDrawing();
 
-    _renderer->FillBackground({ 1.0f, 1.0f, 1.0f });
+    _renderer->StartScene();
+        _renderer->DrawTexture(_backgroundTexture, { 0, 0 }, { SCREEN_WIDTH, SCREEN_HEIGHT },
+                { 0, 0 }, { _backgroundTexture->GetWidth(), _backgroundTexture->GetHeight() });
 
-    _pendulum.Draw(*_renderer);
+        _pendulum.Draw(*_renderer);
+    _renderer->StopScene();
+   
+    _renderer->DrawScene();
 
     if (_lightsOff)
     {
-        _renderer->EnableShader("background");
+        _renderer->EnableShader("lighting");
 
         auto shader = _renderer->GetActiveShader();
         shader->SetVector2("lights[0].position", centre2);
@@ -80,8 +86,10 @@ void Application::Draw()
         shader->SetFloat("lights[0].radius", lightRadius);
         shader->SetFloat("lights[1].radius", lightRadius);
 
-        _renderer->DrawRectangle({ 0.0f, 0.0f }, { SCREEN_WIDTH, SCREEN_HEIGHT },
-                { 0.0f, 0.0f, 0.0f });
+        shader->SetTexture("sceneTexture", _renderer->GetSceneTexture());
+    
+        _renderer->DrawRectangle({ 0, 0 }, { SCREEN_WIDTH, SCREEN_HEIGHT }, { 1.0f, 1.0f, 1.0f });
+
         _renderer->ClearShader();
     }
 
