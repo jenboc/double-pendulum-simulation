@@ -1,5 +1,7 @@
 #version 330
 
+#define NUM_LIGHTS 2
+
 in vec2 fragTexCoord;
 in vec4 fragColor;
 out vec4 finalColor;
@@ -7,33 +9,42 @@ out vec4 finalColor;
 struct Light
 {
     vec2 position;
-    float lightRadius;
+    vec3 colour;
+    float radius;
 };
 
-uniform Light lights[3];
+uniform Light lights[NUM_LIGHTS];
 
-vec4 calculateColour(Light light, vec2 fragCoord)
+vec3 ambientLight = vec3(0.15);
+
+float calculateAttenuation(vec2 fragPos, Light light)
 {
-    vec2 toCentre = fragCoord - light.position;
-    float dist2 = dot(toCentre, toCentre);
+    vec2 displacement = fragPos - light.position;
+    float dist = dot(displacement, displacement);
 
-    float inner = 0.2 * light.lightRadius;
-    float alpha = smoothstep(inner, light.lightRadius, dist2);
+    float inner = 0.01 * light.radius;
+    float outer = light.radius;
 
+    return 1.0 - smoothstep(inner, outer, dist);
+}
 
-    return vec4(0.0, 0.0, 0.0, alpha);
+vec3 computeLighting(vec2 fragPos)
+{
+    vec3 accum = vec3(0.0);
+
+    for (int i = 0; i < NUM_LIGHTS; i++)
+    {
+        float atten = calculateAttenuation(fragPos, lights[i]);
+        accum += atten * lights[i].colour;
+    }
+    
+    return accum;
 }
 
 void main()
 {
-    float alpha = 1.0;
-    for (int i = 0; i < 3; i++)
-    {
-        vec4 colour = calculateColour(lights[i], gl_FragCoord.xy);
-        alpha *= colour.w;
-    }
+    vec2 fragPos = gl_FragCoord.xy;
+    vec3 lighting = ambientLight + computeLighting(fragPos);
 
-    vec3 rgb = normalize(finalColor.xyz);
-
-    finalColor = vec4(rgb, alpha);
+    finalColor = vec4(clamp(lighting, 0.0, 1.0), fragColor.a);
 }
