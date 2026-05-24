@@ -1,5 +1,6 @@
 #include <raylib.h>
 #include <imgui.h>
+#include <glm/gtc/type_ptr.hpp>
 #include "Application.hpp"
 #include "FrameTimer.hpp"
 #include "AppSettings.hpp"
@@ -89,12 +90,11 @@ void Application::Draw()
     _renderer->StopDrawing();
 }
 
-
-float f = 0.0f;
 void Application::DrawUI()
 {
     auto [l1, l2] = _pendulum.GetLengths();
     auto [m1, m2] = _pendulum.GetMasses();
+    auto [c1, c2] = _pendulum.GetColours();
 
     constexpr float min_mass = 0.0f;
     constexpr float max_mass = 10.0f;
@@ -115,6 +115,9 @@ void Application::DrawUI()
     ImGui::SliderFloat("Mass 2", &m2, min_mass, max_mass);
     ImGui::SliderFloat("Length 1", &l1, min_length, max_length);
     ImGui::SliderFloat("Length 2", &l2, min_length, max_length);
+    ImGui::ColorEdit3("Colour 1", glm::value_ptr(c1));
+    ImGui::ColorEdit3("Colour 2", glm::value_ptr(c2));
+
     ImGui::End();
 }
 

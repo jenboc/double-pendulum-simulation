@@ -20,10 +20,10 @@ namespace Engine::Core
             std::unique_ptr<Rendering::Window> _window;
             std::unique_ptr<Rendering::Renderer> _renderer;
             std::unique_ptr<Input> _input;
+            
             DoublePendulum _pendulum;
             bool _physicsPaused { false };
             bool _lightsOff { true };
-
 
             void MainLoop();
             void Update();

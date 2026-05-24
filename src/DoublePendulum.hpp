@@ -21,6 +21,7 @@ namespace Engine::Core
             std::pair<float&, float&> GetLengths();
             std::pair<float&, float&> GetAngles();
             std::pair<float&, float&> GetMasses();
+            std::pair<glm::vec3&, glm::vec3&> GetColours();
 
             std::tuple<glm::vec2, glm::vec2, glm::vec2> CalculateMassCentres();
             
@@ -32,6 +33,9 @@ namespace Engine::Core
 
             float _originX {static_cast<float>(SCREEN_WIDTH) / 2.0f};
             float _originY {static_cast<float>(SCREEN_HEIGHT) / 2.0f};
+
+            glm::vec3 _colour1 { 1.0f, 0.0f, 0.0f };
+            glm::vec3 _colour2 { 0.0f, 1.0f, 0.0f };
 
             float _length1 { 1.0f };
             float _length2 { 1.0f };
@@ -45,7 +49,6 @@ namespace Engine::Core
 
             // Reset velocity
             void ResetDeltas();
-
 
             enum class Masses
             {

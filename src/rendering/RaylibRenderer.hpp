@@ -98,7 +98,6 @@ namespace Engine::Rendering
 
             static Color ToRaylibColour(glm::vec3 colour)
             {
-                colour = 255 / static_cast<float>(colour.length()) * colour;
                 return {
                     ToColourBit(colour.x),
                     ToColourBit(colour.y),
