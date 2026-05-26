@@ -60,7 +60,7 @@ void Application::Draw()
     centre3.y = SCREEN_HEIGHT - centre3.y;
     auto [colour1, colour2] = _pendulum.GetColours();
  
-    constexpr float lightRadius = 50 * 50;
+    constexpr float lightRadius = 50;
 
     _renderer->StartDrawing();
 
@@ -88,7 +88,8 @@ void Application::Draw()
 
         shader->SetTexture("sceneTexture", _renderer->GetSceneTexture());
     
-        _renderer->DrawRectangle({ 0, 0 }, { SCREEN_WIDTH, SCREEN_HEIGHT }, { 1.0f, 1.0f, 1.0f });
+        _renderer->DrawTexture(_backgroundTexture, { 0, 0 }, { SCREEN_WIDTH, SCREEN_HEIGHT },
+                { 0, 0 }, { _backgroundTexture->GetWidth(), _backgroundTexture->GetHeight() });
 
         _renderer->ClearShader();
     }
