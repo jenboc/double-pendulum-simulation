@@ -1,7 +1,7 @@
 #include "Application.hpp"
 
 int main() {
-    Application app;
+    Engine::Core::Application app;
     app.Run();
 
     return 0;

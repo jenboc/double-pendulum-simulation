@@ -3,27 +3,36 @@
 #include "Input.hpp"
 #include <raylib.h>
 
-class RaylibInput : public Input
+namespace Engine::Core
 {
-public:
-    bool IsSpacePressed() const override
+    class RaylibInput : public Input
     {
-        return IsKeyPressed(KEY_SPACE);
-    }
+        public:
+            bool IsSpacePressed() const override
+            {
+                return IsKeyPressed(KEY_SPACE);
+            }
 
-    bool IsRPressed() const override
-    {
-        return IsKeyPressed(KEY_R);
-    }
+            bool IsRPressed() const override
+            {
+                return IsKeyPressed(KEY_R);
+            }
 
-    glm::vec2 GetMousePosition() const override
-    {
-        Vector2 mousePos = ::GetMousePosition();
-        return { mousePos.x, mousePos.y };
-    }
+            bool IsFPressed() const override
+            {
+                return IsKeyPressed(KEY_F);
+            }
 
-    bool IsLeftMouseDown() const override
-    {
-        return IsMouseButtonDown(MOUSE_BUTTON_LEFT);
-    }
-};
+
+            glm::vec2 GetMousePosition() const override
+            {
+                Vector2 mousePos = ::GetMousePosition();
+                return { mousePos.x, mousePos.y };
+            }
+
+            bool IsLeftMouseDown() const override
+            {
+                return IsMouseButtonDown(MOUSE_BUTTON_LEFT);
+            }
+    };
+}

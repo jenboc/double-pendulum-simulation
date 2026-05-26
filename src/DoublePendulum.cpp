@@ -3,6 +3,10 @@
 #include "solving/RungeKutta.hpp"
 #include <cmath>
 
+using namespace Engine::Core;
+using namespace Engine::DESolvers;
+using namespace Engine::Rendering;
+
 #define GLM_ENABLE_EXPERIMENTAL 
 #include <glm/gtx/norm.hpp>
 
@@ -39,18 +43,16 @@ void DoublePendulum::ResetDeltas()
 void DoublePendulum::Draw(Renderer& renderer)
 {
     auto [centre1, centre2, centre3] = CalculateMassCentres();
-    glm::vec3 black { 0.0f, 0.0f, 0.0f };
-    glm::vec3 green { 0.0f, 1.0f, 0.0f };
-    glm::vec3 blue { 0.0f, 0.0f, 1.0f };
-
+    const glm::vec3 black { 0.0f, 0.0f, 0.0f };
+    
     // Draw lines first
     renderer.DrawLine(centre1, centre2, black);
     renderer.DrawLine(centre2, centre3, black);
 
     // Draw circles
     renderer.DrawCircle(centre1, CIRCLE_RADIUS / 2, black);
-    renderer.DrawCircle(centre2, CIRCLE_RADIUS, green);
-    renderer.DrawCircle(centre3, CIRCLE_RADIUS, blue);
+    renderer.DrawCircle(centre2, CIRCLE_RADIUS, _colour1);
+    renderer.DrawCircle(centre3, CIRCLE_RADIUS, _colour2);
 }
 
 void DoublePendulum::Update(const Input& input, bool isPhysicsPaused)
@@ -161,4 +163,9 @@ std::pair<float&, float&> DoublePendulum::GetAngles()
 std::pair<float&, float&> DoublePendulum::GetMasses()
 {
     return { _mass1, _mass2 };
+}
+
+std::pair<glm::vec3&, glm::vec3&> DoublePendulum::GetColours()
+{
+    return { _colour1, _colour2 };
 }
