@@ -20,7 +20,7 @@ Application::Application()
                   SCREEN_TITLE)),
       _renderer(std::make_unique<RaylibRenderer>(SCREEN_WIDTH, SCREEN_HEIGHT)),
       _input(std::make_unique<RaylibInput>()),
-      _backgroundTexture(_renderer->LoadTexture("background.png")),
+      _backgroundTexture(_renderer->LoadTexture("res/background.png")),
       _pendulum() 
 {
     _renderer->LoadShader("lighting", "", "shaders/lighting.fs");
