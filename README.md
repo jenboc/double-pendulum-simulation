@@ -32,13 +32,13 @@ These equations were derived and simplified using SageMath's symbolic algebra ca
 
 The resulting system of second-order ODEs is reorganised into a first-order vector ODE of the form
 
-\[
+```math
 \frac{d\mathbf{y}}{dt} = f(t,\mathbf{y})
-\]
+```
 
 where the state vector is represented by a `glm::vec4`:
 
-\[
+```math
 \mathbf{y} =
 \begin{pmatrix}
 \theta_1 \\
@@ -46,7 +46,7 @@ where the state vector is represented by a `glm::vec4`:
 \dot{\theta}_1 \\
 \dot{\theta}_2
 \end{pmatrix}
-\]
+```
 
 The full derivation is available in the accompanying Jupyter Notebook:
 
@@ -74,9 +74,9 @@ A templated base class, `OdeSolver<T>`, defines the common interface for numeric
 
 The ODE is supplied as a function:
 
-\[
+```math
 \mathbf{y}' = f(t,\mathbf{y})
-\]
+```
 
 Concrete implementations inherit from this base class and implement their respective integration schemes through `DoStep()`.
 
@@ -97,9 +97,9 @@ The simulation currently uses **Heun's method**, a second-order explicit Rungeâ€
 
 The simulation uses a fixed physics timestep of
 
-\[
+```math
 \Delta t = 0.001 \text{ seconds}
-\]
+```
 
 Physics updates are decoupled from rendering using an accumulator-based update loop. This allows the simulation to perform multiple physics updates when necessary, independently of the rendering frame rate.
 
